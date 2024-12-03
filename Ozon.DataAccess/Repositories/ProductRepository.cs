@@ -1,16 +1,47 @@
-namespace Ozon.DataAccess.Repositories;
+using Ozon.Core.Models;
+using Ozon.DataAccess.Context;
 
-public class ProductRepository : IProductRepository
+namespace Ozon.DataAccess.Repositories
 {
-    private readonly ApplicationDbContext _context;
-
-    public ProductRepository(ApplicationDbContext context)
+    public class ProductRepository
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public async Task<Product> GetByIdAsync(int id)
-    {
-        return await _context.Products.FindAsync(id);
+        public ProductRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public IEnumerable<Product> GetAll()
+        {
+            return _context.Products.ToList();
+        }
+
+        public Product GetById(Guid id)
+        {
+            return _context.Products.FirstOrDefault(p => p.Id == id);
+        }
+
+        public void Add(Product product)
+        {
+            _context.Products.Add(product);
+            _context.SaveChanges();
+        }
+
+        public void Update(Product product)
+        {
+            _context.Products.Update(product);
+            _context.SaveChanges();
+        }
+
+        public void Delete(Guid id)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+            }
+        }
     }
 }

@@ -1,38 +1,47 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Ozon.Application.Settings;
-using Ozon.Core.Settings;
+using Ozon.Application.Abstractions;
+using Ozon.Application.DTOs;
+using Ozon.Core.Models;
+using Ozon.DataAccess.Context;
 
-public class AuthService : IAuthService
+namespace Ozon.Application.Services;
+
+public class JwtTokenService : IAuthService
 {
-    private readonly JwtSettings _jwtSettings;
+    private readonly AppDbContext _context;
 
-    public AuthService(JwtSettings jwtSettings)
+    public JwtTokenService(AppDbContext context)
     {
-        _jwtSettings = jwtSettings;
+        _context = context;
     }
 
-    public string GenerateToken(string userId, string role)
+    public User Register(RegisterDto registerDto)
     {
-        var claims = new[]
+        if (_context.Users.Any(u => u.Username == registerDto.Username))
         {
-            new Claim(ClaimTypes.NameIdentifier, userId),
-            new Claim(ClaimTypes.Role, role)
+            return null; // Пользователь уже существует
+        }
+
+        var user = new User
+        {
+            Username = registerDto.Username,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+            Role = string.IsNullOrEmpty(registerDto.Role) ? "User" : registerDto.Role // Устанавливаем роль
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        _context.Users.Add(user);
+        _context.SaveChanges();
+        return user;
+    }
 
-        var token = new JwtSecurityToken(
-            _jwtSettings.Issuer,
-            _jwtSettings.Audience,
-            claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenLifetimeMinutes),
-            signingCredentials: creds
-        );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+    public User Login(LoginDto loginDto)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Username == loginDto.Username);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+        {
+            return null;
+        }
+
+        return user;
     }
 }

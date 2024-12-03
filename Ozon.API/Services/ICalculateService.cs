@@ -1,4 +1,4 @@
-namespace Ozon.Api.Services;
+namespace Ozon.A.Services;
 
 public interface ICalculatorService
 {

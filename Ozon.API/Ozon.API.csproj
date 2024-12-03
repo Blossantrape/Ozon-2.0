@@ -18,4 +18,8 @@
       <Folder Include="Abstractions\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Ozon.Application\Ozon.Application.csproj" />
+    </ItemGroup>
+
 </Project>

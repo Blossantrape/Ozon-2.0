@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Api", "Ozon.Api\Ozon.Api.csproj", "{747D11AF-9297-4A6A-B5BA-497EA49D4A75}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.API", "Ozon.API\Ozon.API.csproj", "{747D11AF-9297-4A6A-B5BA-497EA49D4A75}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Core", "Ozon.Core\Ozon.Core.csproj", "{DCF2AFA8-C51B-4FD5-A400-441F9F7F3802}"
 EndProject

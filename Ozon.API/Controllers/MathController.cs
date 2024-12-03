@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Ozon.Api.Services;
+using Ozon.A.Services;
 
-namespace Ozon.Api.Controllers;
+namespace Ozon.A.Controllers;
 
 [Authorize]
 [ApiController]
