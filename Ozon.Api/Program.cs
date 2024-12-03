@@ -1,5 +1,5 @@
-using Api;
-using Api.Services;
+using Ozon.Api;
+using Ozon.Api.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Application
+// Ozon.Application
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

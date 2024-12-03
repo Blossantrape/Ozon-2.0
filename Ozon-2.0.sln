@@ -1,6 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{747D11AF-9297-4A6A-B5BA-497EA49D4A75}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Api", "Ozon.Api\Ozon.Api.csproj", "{747D11AF-9297-4A6A-B5BA-497EA49D4A75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Core", "Ozon.Core\Ozon.Core.csproj", "{DCF2AFA8-C51B-4FD5-A400-441F9F7F3802}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Application", "Ozon.Application\Ozon.Application.csproj", "{9B6B938B-FA8B-4365-BD27-C519141D055E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.DataAccess", "Ozon.DataAccess\Ozon.DataAccess.csproj", "{49933BA1-6C0E-4455-99DD-49D61C98FF8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Tests.xUnit", "Ozon.Tests.xUnit\Ozon.Tests.xUnit.csproj", "{C2178BC4-7B4A-45DD-90D4-FD47DB3864E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +20,21 @@ Global
 		{747D11AF-9297-4A6A-B5BA-497EA49D4A75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{747D11AF-9297-4A6A-B5BA-497EA49D4A75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{747D11AF-9297-4A6A-B5BA-497EA49D4A75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF2AFA8-C51B-4FD5-A400-441F9F7F3802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF2AFA8-C51B-4FD5-A400-441F9F7F3802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF2AFA8-C51B-4FD5-A400-441F9F7F3802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF2AFA8-C51B-4FD5-A400-441F9F7F3802}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B6B938B-FA8B-4365-BD27-C519141D055E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B6B938B-FA8B-4365-BD27-C519141D055E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B6B938B-FA8B-4365-BD27-C519141D055E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B6B938B-FA8B-4365-BD27-C519141D055E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49933BA1-6C0E-4455-99DD-49D61C98FF8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49933BA1-6C0E-4455-99DD-49D61C98FF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49933BA1-6C0E-4455-99DD-49D61C98FF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49933BA1-6C0E-4455-99DD-49D61C98FF8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2178BC4-7B4A-45DD-90D4-FD47DB3864E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2178BC4-7B4A-45DD-90D4-FD47DB3864E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2178BC4-7B4A-45DD-90D4-FD47DB3864E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2178BC4-7B4A-45DD-90D4-FD47DB3864E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
