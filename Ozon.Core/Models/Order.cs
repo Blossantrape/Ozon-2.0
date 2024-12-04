@@ -8,10 +8,4 @@ namespace Ozon.Core.Models
         public decimal TotalAmount { get; set; }
         public DateTime CreatedAt { get; set; }
     }
-
-    public class OrderItem
-    {
-        public Guid ProductId { get; set; }
-        public int Quantity { get; set; }
-    }
 }

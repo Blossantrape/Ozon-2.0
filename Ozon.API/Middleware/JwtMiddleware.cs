@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Ozon.A.Middleware;
+namespace Ozon.API.Middleware;
 
 public class JwtMiddleware
 {
