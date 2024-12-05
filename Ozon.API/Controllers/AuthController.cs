@@ -65,12 +65,13 @@ namespace Ozon.API.Controllers
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
+            var expirationMinutes  = int.Parse(_configuration["JwtSettings:ExpirationInMinutes"] ?? "60");;
+            
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddMinutes(expirationMinutes ), // Срок действия токена
                 signingCredentials: creds
             );
 
