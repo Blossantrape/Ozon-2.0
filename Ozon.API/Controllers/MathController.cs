@@ -5,6 +5,7 @@ using Ozon.API.Services;
 namespace Ozon.API.Controllers;
 
 [Authorize]
+//[Authorization]
 [ApiController]
 [Route("api/[controller]")]
 public class MathController : ControllerBase
