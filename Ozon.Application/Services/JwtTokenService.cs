@@ -1,47 +1,51 @@
-using Ozon.Application.Abstractions;
 using Ozon.Application.DTOs;
 using Ozon.Core.Models;
 using Ozon.DataAccess.Context;
+using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using Ozon.Application.Abstractions;
 
-namespace Ozon.Application.Services;
-
-public class JwtTokenService : IAuthService
+namespace Ozon.Application.Services
 {
-    private readonly AppDbContext _context;
-
-    public JwtTokenService(AppDbContext context)
+    public class JwtTokenService : IAuthService
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public User Register(RegisterDto registerDto)
-    {
-        if (_context.Users.Any(u => u.Username == registerDto.Username))
+        public JwtTokenService(AppDbContext context)
         {
-            return null; // Пользователь уже существует
+            _context = context;
         }
 
-        var user = new User
+        public async Task<User> Register(RegisterDto registerDto)
         {
-            Username = registerDto.Username,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-            Role = string.IsNullOrEmpty(registerDto.Role) ? "User" : registerDto.Role // Устанавливаем роль
-        };
+            // Проверка на существование пользователя
+            if (await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
+            {
+                return null; // Пользователь уже существует
+            }
 
-        _context.Users.Add(user);
-        _context.SaveChanges();
-        return user;
-    }
+            var user = new User
+            {
+                Username = registerDto.Username,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                Role = string.IsNullOrEmpty(registerDto.Role) ? "User" : registerDto.Role // Устанавливаем роль
+            };
 
-
-    public User Login(LoginDto loginDto)
-    {
-        var user = _context.Users.FirstOrDefault(u => u.Username == loginDto.Username);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
-        {
-            return null;
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync(); // Асинхронное сохранение в базу данных
+            return user;
         }
 
-        return user;
+        public async Task<User> Login(LoginDto loginDto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            {
+                return null;
+            }
+
+            return user;
+        }
     }
 }
