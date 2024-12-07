@@ -9,7 +9,5 @@ namespace Ozon.Application.Abstractions
         void Add(Product product);
         void Update(Product product);
         void Delete(Guid id);
-
-        public void AttachProduct(Guid id);
     }
 }

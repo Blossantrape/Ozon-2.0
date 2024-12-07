@@ -31,20 +31,13 @@ namespace Ozon.Application.Services
 
         public void Update(Product product)
         {
-            /*_context.Products.Update(product);
-            _context.SaveChanges();*/
-            
             var existingProduct = _context.Products.Find(product.Id);
     
             if (existingProduct == null)
             {
                 throw new KeyNotFoundException($"Продукт с ID {product.Id} не найден.");
             }
-
-            // Используем SetValues для обновления только изменённых свойств
             _context.Entry(existingProduct).CurrentValues.SetValues(product);
-
-            // Сохраняем изменения в базе данных
             _context.SaveChanges();
         }
 
@@ -56,12 +49,6 @@ namespace Ozon.Application.Services
                 _context.Products.Remove(product);
                 _context.SaveChanges();
             }
-        }
-
-        public void AttachProduct(Guid id)
-        {
-            var product = new Product {Id = id};
-            _context.Products.Attach(product);
         }
     }
 }
