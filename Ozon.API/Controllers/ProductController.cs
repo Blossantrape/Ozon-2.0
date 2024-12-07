@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ozon.Application.Abstractions;
+using Ozon.Application.DTOs;
 using Ozon.Core.Models;
 
 namespace Ozon.API.Controllers
@@ -42,9 +43,8 @@ namespace Ozon.API.Controllers
         /// </summary>
         /// <param name="id">Идентификатор продукта.</param>
         /// <returns>Продукт или ошибка 404.</returns>
-        [HttpGet("GetProductById, {id}")]
+        [HttpGet("GetProductById/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetProductById(Guid id)
         {
@@ -52,7 +52,7 @@ namespace Ozon.API.Controllers
             {
                 var product = _productService.GetById(id);
                 if (product == null)
-                    return NotFound($"Продукт с ID {id} не найден.");
+                    return NotFound(/*$"Продукт с ID {id} не найден."*/);
 
                 return Ok(product);
             }
@@ -66,17 +66,27 @@ namespace Ozon.API.Controllers
         /// Добавить новый продукт.
         /// </summary>
         /// <param name="product">Модель продукта.</param>
+        /// <param name="addProductDto"></param>
         /// <returns>Созданный продукт с его ID.</returns>
         [HttpPost("AddProduct")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult AddProduct([FromBody] Product product)
+        public IActionResult AddProduct([FromBody] AddProductDto addProductDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+                
+                var product = new Product
+                {
+                    Id = Guid.NewGuid(), // Генерируем ID на сервере
+                    Name = addProductDto.Name,
+                    Description = addProductDto.Description,
+                    Price = addProductDto.Price,
+                    StockQuantity = addProductDto.StockQuantity
+                };
 
                 _productService.Add(product);
                 return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
@@ -93,7 +103,7 @@ namespace Ozon.API.Controllers
         /// <param name="id">Идентификатор продукта.</param>
         /// <param name="product">Модель продукта с обновленными данными.</param>
         /// <returns>Статус выполнения операции.</returns>
-        [HttpPut("UpdateProduct, {id}")]
+        [HttpPut("UpdateProduct/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -126,7 +136,7 @@ namespace Ozon.API.Controllers
         /// </summary>
         /// <param name="id">Идентификатор продукта.</param>
         /// <returns>Статус выполнения операции.</returns>
-        [HttpDelete("DeleteProduct,{id}")]
+        [HttpDelete("DeleteProduct/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
