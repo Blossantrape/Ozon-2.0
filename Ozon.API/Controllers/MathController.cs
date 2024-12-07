@@ -5,7 +5,6 @@ using Ozon.API.Services;
 namespace Ozon.API.Controllers;
 
 [Authorize]
-//[Authorization]
 [ApiController]
 [Route("api/[controller]")]
 public class MathController : ControllerBase
@@ -16,15 +15,7 @@ public class MathController : ControllerBase
     {
         _calculatorService = calculatorService;
     }
-
-    /// <summary>
-    /// Выполняет сложение двух чисел.
-    /// </summary>
-    /// <param name="a">Первое число.</param>
-    /// <param name="b">Второе число.</param>
-    /// <returns>Результат сложения чисел.</returns>
-    /// <response code="200">Возвращает результат операции.</response>
-    /// <response code="400">Если входные данные некорректны.</response>
+    
     [HttpGet("add")]
     public IActionResult Add(double a, double b)
     {

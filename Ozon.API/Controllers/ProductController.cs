@@ -1,11 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ozon.Application.Abstractions;
 using Ozon.Core.Models;
 
 namespace Ozon.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -15,44 +17,134 @@ namespace Ozon.API.Controllers
             _productService = productService;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        /// <summary>
+        /// Получить список всех продуктов.
+        /// </summary>
+        /// <returns>Список продуктов.</returns>
+        [HttpGet("GetAllProducts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult GetAllProducts()
         {
-            var products = _productService.GetAll();
-            return Ok(products);
+            try
+            {
+                var products = _productService.GetAll();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ошибка: {ex.Message}");
+            }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        /// <summary>
+        /// Получить продукт по ID.
+        /// </summary>
+        /// <param name="id">Идентификатор продукта.</param>
+        /// <returns>Продукт или ошибка 404.</returns>
+        [HttpGet("GetProductById, {id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult GetProductById(Guid id)
         {
-            var product = _productService.GetById(id);
-            if (product == null)
-                return NotFound();
-            return Ok(product);
+            try
+            {
+                var product = _productService.GetById(id);
+                if (product == null)
+                    return NotFound($"Продукт с ID {id} не найден.");
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ошибка: {ex.Message}");
+            }
         }
 
-        [HttpPost]
-        public IActionResult Add([FromBody] Product product)
+        /// <summary>
+        /// Добавить новый продукт.
+        /// </summary>
+        /// <param name="product">Модель продукта.</param>
+        /// <returns>Созданный продукт с его ID.</returns>
+        [HttpPost("AddProduct")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult AddProduct([FromBody] Product product)
         {
-            _productService.Add(product);
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                _productService.Add(product);
+                return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ошибка: {ex.Message}");
+            }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, [FromBody] Product product)
+        /// <summary>
+        /// Обновить данные продукта.
+        /// </summary>
+        /// <param name="id">Идентификатор продукта.</param>
+        /// <param name="product">Модель продукта с обновленными данными.</param>
+        /// <returns>Статус выполнения операции.</returns>
+        [HttpPut("UpdateProduct, {id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult UpdateProduct(Guid id, [FromBody] Product product)
         {
-            if (id != product.Id)
-                return BadRequest();
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            _productService.Update(product);
-            return NoContent();
+                if (id != product.Id)
+                    return BadRequest("ID в URL и модели не совпадают.");
+
+                var existingProduct = _productService.GetById(id);
+                if (existingProduct == null)
+                    return NotFound($"Продукт с ID {id} не найден.");
+
+                _productService.Update(product);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ошибка: {ex.Message}");
+            }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        /// <summary>
+        /// Удалить продукт по ID.
+        /// </summary>
+        /// <param name="id">Идентификатор продукта.</param>
+        /// <returns>Статус выполнения операции.</returns>
+        [HttpDelete("DeleteProduct,{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult DeleteProduct(Guid id)
         {
-            _productService.Delete(id);
-            return NoContent();
+            try
+            {
+                var existingProduct = _productService.GetById(id);
+                if (existingProduct == null)
+                    return NotFound($"Продукт с ID {id} не найден.");
+
+                _productService.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ошибка: {ex.Message}");
+            }
         }
     }
 }
