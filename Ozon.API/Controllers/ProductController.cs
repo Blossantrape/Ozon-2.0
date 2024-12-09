@@ -34,16 +34,16 @@ namespace Ozon.API.Controllers
             }
         }
         
-        [HttpGet("GetProductById/{id}")]
+        [HttpGet("GetProductById/{uuid}")]
         /*[ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]*/
-        public IActionResult GetProductById(Guid id)
+        public IActionResult GetProductById(Guid uuid)
         {
             try
             {
-                var product = _productService.GetById(id);
+                var product = _productService.GetById(uuid);
                 if (product == null)
-                    return NotFound(/*$"Продукт с ID {id} не найден."*/);
+                    return NotFound(/*$"Продукт с ID {uuid} не найден."*/);
 
                 return Ok(product);
             }
@@ -82,24 +82,24 @@ namespace Ozon.API.Controllers
             }
         }
         
-        [HttpPut("UpdateProduct/{id}")]
+        [HttpPut("UpdateProduct/{uuid}")]
         /*[ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]*/
-        public IActionResult UpdateProduct(Guid id, [FromBody] Product product)
+        public IActionResult UpdateProduct(Guid uuid, [FromBody] Product product)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (id != product.Id)
+                if (uuid != product.Id)
                     return BadRequest("ID в URL и модели не совпадают.");
 
-                var existingProduct = _productService.GetById(id);
+                var existingProduct = _productService.GetById(uuid);
                 if (existingProduct == null)
-                    return NotFound($"Продукт с ID {id} не найден.");
+                    return NotFound($"Продукт с ID {uuid} не найден.");
 
                 _productService.Update(product);
                 return NoContent();
@@ -110,19 +110,19 @@ namespace Ozon.API.Controllers
             }
         }
 
-        [HttpDelete("DeleteProduct/{id}")]
+        [HttpDelete("DeleteProduct/{uuid}")]
         /*[ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]*/
-        public IActionResult DeleteProduct(Guid id)
+        public IActionResult DeleteProduct(Guid uuid)
         {
             try
             {
-                var existingProduct = _productService.GetById(id);
+                var existingProduct = _productService.GetById(uuid);
                 if (existingProduct == null)
-                    return NotFound($"Продукт с ID {id} не найден.");
+                    return NotFound($"Продукт с ID {uuid} не найден.");
 
-                _productService.Delete(id);
+                _productService.Delete(uuid);
                 return NoContent();
             }
             catch (Exception ex)

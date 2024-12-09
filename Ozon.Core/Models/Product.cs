@@ -7,7 +7,7 @@ public class Product
 {
     /*public Product()
     {
-        Id = Guid.NewGuid(); // Автоматическая генерация ID
+        Uuid = Guid.NewGuid(); // Автоматическая генерация ID
     }*/
     
     [Key]
