@@ -63,7 +63,7 @@ namespace Ozon.API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                
+
                 var product = new Product
                 {
                     Id = Guid.NewGuid(), // Генерируем ID на сервере
@@ -72,9 +72,14 @@ namespace Ozon.API.Controllers
                     Price = addProductDto.Price,
                     StockQuantity = addProductDto.StockQuantity
                 };
-
+                
                 _productService.Add(product);
-                return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
+                
+                return CreatedAtAction(
+                    nameof(GetProductById),
+                    new { uuid = product.Id }, // "uuid" вместо "id"
+                    product
+                );
             }
             catch (Exception ex)
             {
