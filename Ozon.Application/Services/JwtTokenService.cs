@@ -17,7 +17,7 @@ namespace Ozon.Application.Services
             _context = context;
         }
 
-        public async Task<User> Register(RegisterDto registerDto)
+        public async Task<User> RegisterAsync(RegisterDto registerDto)
         {
             // Проверка на существование пользователя
             if (await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
@@ -37,7 +37,7 @@ namespace Ozon.Application.Services
             return user;
         }
 
-        public async Task<User> Login(LoginDto loginDto)
+        public async Task<User> LoginAsync(LoginDto loginDto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))

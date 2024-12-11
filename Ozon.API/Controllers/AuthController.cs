@@ -1,12 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Ozon.Application.DTOs;
-using Ozon.Core.Models;
-using Ozon.Application.Abstractions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Ozon.Application.Abstractions;
+using Ozon.Application.DTOs;
+using Ozon.Core.Models;
 
 namespace Ozon.API.Controllers
 {
@@ -31,7 +30,7 @@ namespace Ozon.API.Controllers
                 return BadRequest("Требуются логин и пароль.");
             }
 
-            var user = await _authService.Register(registerDto);
+            var user = await _authService.RegisterAsync(registerDto);
             if (user == null)
             {
                 return Conflict("Юзернейм занят.");
@@ -43,7 +42,7 @@ namespace Ozon.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var user = await _authService.Login(loginDto);
+            var user = await _authService.LoginAsync(loginDto);
             if (user == null)
             {
                 return Unauthorized("Неправильный логин или пароль.");
@@ -52,7 +51,6 @@ namespace Ozon.API.Controllers
             var token = GenerateJwtToken(user);
             return Ok(new { Token = token });
         }
-
 
         private string GenerateJwtToken(User user)
         {
@@ -65,13 +63,13 @@ namespace Ozon.API.Controllers
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expirationMinutes  = int.Parse(_configuration["JwtSettings:ExpirationInMinutes"] ?? "60");;
-            
+            var expirationMinutes = int.Parse(_configuration["JwtSettings:ExpirationInMinutes"] ?? "60");
+
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(expirationMinutes ), // Срок действия токена
+                expires: DateTime.Now.AddMinutes(expirationMinutes), // Срок действия токена
                 signingCredentials: creds
             );
 

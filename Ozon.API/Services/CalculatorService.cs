@@ -1,29 +1,30 @@
-namespace Ozon.API.Services;
-
-public class CalculatorService : ICalculatorService
+namespace Ozon.API.Services
 {
-    public double Add(double a, double b)
+    public class CalculatorService : ICalculatorService
     {
-        return a + b;
-    }
-
-    public double Subtract(double a, double b)
-    {
-        return a - b;
-    }
-
-    public double Multiply(double a, double b)
-    {
-        return a * b;
-    }
-
-    public double Divide(double a, double b)
-    {
-        if (b == 0)
+        public Task<double> AddAsync(double a, double b)
         {
-            throw new DivideByZeroException("Division by zero is not allowed.");
+            return Task.FromResult(a + b);
         }
 
-        return a / b;
+        public Task<double> SubtractAsync(double a, double b)
+        {
+            return Task.FromResult(a - b);
+        }
+
+        public Task<double> MultiplyAsync(double a, double b)
+        {
+            return Task.FromResult(a * b);
+        }
+
+        public Task<double> DivideAsync(double a, double b)
+        {
+            if (b == 0)
+            {
+                throw new DivideByZeroException("Деление на ноль невозможно.");
+            }
+
+            return Task.FromResult(a / b);
+        }
     }
 }

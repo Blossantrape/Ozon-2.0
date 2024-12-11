@@ -5,7 +5,7 @@ namespace Ozon.Application.Abstractions
 {
     public interface IAuthService
     {
-        Task<User> Register(RegisterDto registerDto);
-        Task<User> Login(LoginDto loginDto);
+        Task<User> RegisterAsync(RegisterDto registerDto);
+        Task<User> LoginAsync(LoginDto loginDto);
     }
 }

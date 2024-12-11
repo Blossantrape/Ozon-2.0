@@ -1,4 +1,4 @@
-using Ozon.Application.Abstractions;
+using Microsoft.EntityFrameworkCore;
 using Ozon.Core.Abstractions;
 using Ozon.Core.Models;
 using Ozon.DataAccess.Context;
@@ -14,35 +14,42 @@ namespace Ozon.Application.Services
             _context = context;
         }
 
-        public IEnumerable<Order> GetAllOrders()
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            return _context.Orders.ToList();
+            return await _context.Orders.ToListAsync();
         }
 
-        public Order GetOrderById(Guid id)
+        public async Task<Order> GetOrderByIdAsync(Guid id)
         {
-            return _context.Orders.FirstOrDefault(o => o.Id == id);
+            return await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public void CreateOrder(Order order)
+        public async Task CreateOrderAsync(Order order)
         {
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+            await _context.Orders.AddAsync(order);
+            await _context.SaveChangesAsync();
         }
 
-        public void UpdateOrder(Order order)
+        public async Task UpdateOrderAsync(Order order)
         {
-            _context.Orders.Update(order);
-            _context.SaveChanges();
+            var existingOrder = await _context.Orders.FindAsync(order.Id);
+
+            if (existingOrder == null)
+            {
+                throw new KeyNotFoundException($"Заказ с ID {order.Id} не найден.");
+            }
+
+            _context.Entry(existingOrder).CurrentValues.SetValues(order);
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteOrder(Guid id)
+        public async Task DeleteOrderAsync(Guid id)
         {
-            var order = _context.Orders.FirstOrDefault(o => o.Id == id);
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
             if (order != null)
             {
                 _context.Orders.Remove(order);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

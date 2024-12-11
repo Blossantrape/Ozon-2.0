@@ -4,10 +4,10 @@ namespace Ozon.Application.Abstractions
 {
     public interface IProductService
     {
-        IEnumerable<Product> GetAll();
-        Product GetById(Guid id);
-        void Add(Product product);
-        void Update(Product product);
-        void Delete(Guid id);
+        Task<IEnumerable<Product>> GetAllAsync();
+        Task<Product> GetByIdAsync(Guid id);
+        Task AddAsync(Product product);
+        Task UpdateAsync(Product product);
+        Task DeleteAsync(Guid id);
     }
 }

@@ -9,6 +9,7 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
+        // Получение настроек JWT из конфигурации.
         var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
         services.AddSingleton(jwtSettings);
@@ -47,8 +48,6 @@ public static class ServiceExtensions
                     }
                 };
             });
-        
-        
 
         return services;
     }

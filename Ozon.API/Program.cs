@@ -10,7 +10,7 @@ using Ozon.DataAccess.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
+// AddAsync services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

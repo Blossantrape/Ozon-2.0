@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Ozon.Application.Abstractions;
 using Ozon.Core.Models;
 using Ozon.DataAccess.Context;
@@ -13,41 +14,42 @@ namespace Ozon.Application.Services
             _context = context;
         }
 
-        public IEnumerable<Product> GetAll()
+        public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            return _context.Products.ToList();
+            return await _context.Products.ToListAsync();
         }
 
-        public Product GetById(Guid id)
+        public async Task<Product> GetByIdAsync(Guid id)
         {
-            return _context.Products.FirstOrDefault(p => p.Id == id);
+            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public void Add(Product product)
+        public async Task AddAsync(Product product)
         {
-            _context.Products.Add(product);
-            _context.SaveChanges();
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Product product)
+        public async Task UpdateAsync(Product product)
         {
-            var existingProduct = _context.Products.Find(product.Id);
-    
+            var existingProduct = await _context.Products.FindAsync(product.Id);
+
             if (existingProduct == null)
             {
                 throw new KeyNotFoundException($"Продукт с ID {product.Id} не найден.");
             }
+
             _context.Entry(existingProduct).CurrentValues.SetValues(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
             if (product != null)
             {
                 _context.Products.Remove(product);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }
