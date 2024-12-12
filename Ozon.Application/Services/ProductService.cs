@@ -1,56 +1,41 @@
-using Microsoft.EntityFrameworkCore;
 using Ozon.Application.Abstractions;
 using Ozon.Core.Models;
-using Ozon.DataAccess.Context;
+using Ozon.DataAccess.Abstractions;
 
 namespace Ozon.Application.Services
 {
     public class ProductService : IProductService
     {
-        private readonly AppDbContext _context;
+        private readonly IProductRepository _productRepository;
 
-        public ProductService(AppDbContext context)
+        public ProductService(IProductRepository productRepository)
         {
-            _context = context;
+            _productRepository = productRepository;
         }
 
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _productRepository.GetAllAsync();
         }
 
         public async Task<Product> GetByIdAsync(Guid id)
         {
-            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            return await _productRepository.GetByIdAsync(id);
         }
 
         public async Task AddAsync(Product product)
         {
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
+            await _productRepository.AddAsync(product);
         }
 
         public async Task UpdateAsync(Product product)
         {
-            var existingProduct = await _context.Products.FindAsync(product.Id);
-
-            if (existingProduct == null)
-            {
-                throw new KeyNotFoundException($"Продукт с ID {product.Id} не найден.");
-            }
-
-            _context.Entry(existingProduct).CurrentValues.SetValues(product);
-            await _context.SaveChangesAsync();
+            await _productRepository.UpdateAsync(product);
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-            }
+            await _productRepository.DeleteAsync(id);
         }
     }
 }

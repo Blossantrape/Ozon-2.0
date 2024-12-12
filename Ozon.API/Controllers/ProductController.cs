@@ -26,7 +26,15 @@ namespace Ozon.API.Controllers
             try
             {
                 var products = await _productService.GetAllAsync();
-                return Ok(products);
+                var productsDto = products.Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Description = p.Description,
+                    StockQuantity = p.StockQuantity
+                }).ToList();
+                return Ok(productsDto);
             }
             catch (Exception ex)
             {
@@ -43,9 +51,17 @@ namespace Ozon.API.Controllers
             {
                 var product = await _productService.GetByIdAsync(uuid);
                 if (product == null)
-                    return NotFound( /*$"Продукт с ID {uuid} не найден."*/);
+                    return NotFound($"Продукт с ID {uuid} не найден.");
 
-                return Ok(product);
+                var productDto = new ProductDto
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Price = product.Price,
+                    StockQuantity = product.StockQuantity
+                };
+                
+                return Ok(productDto);
             }
             catch (Exception ex)
             {
@@ -92,21 +108,26 @@ namespace Ozon.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]*/
-        public async Task<IActionResult> UpdateProduct(Guid uuid, [FromBody] Product product)
+        public async Task<IActionResult> UpdateProduct(Guid uuid, [FromBody] UpdateProductDto updateProductDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (uuid != product.Id)
-                    return BadRequest("ID в URL и модели не совпадают.");
+                /*if (uuid != updateProductDto.Id)
+                    return BadRequest("ID в URL и модели не совпадают.");*/
 
                 var existingProduct = await _productService.GetByIdAsync(uuid);
                 if (existingProduct == null)
                     return NotFound($"Продукт с ID {uuid} не найден.");
+                
+                existingProduct.Name = updateProductDto.Name;
+                existingProduct.Description = updateProductDto.Description;
+                existingProduct.Price = updateProductDto.Price;
+                existingProduct.StockQuantity = updateProductDto.StockQuantity;
 
-                await _productService.UpdateAsync(product);
+                await _productService.UpdateAsync(existingProduct);
                 return NoContent();
             }
             catch (Exception ex)
@@ -119,15 +140,15 @@ namespace Ozon.API.Controllers
         /*[ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]*/
-        public async Task<IActionResult> DeleteProduct(Guid uuid)
+        public async Task<IActionResult> DeleteProduct(DeleteProductDto deleteProductDto)
         {
             try
             {
-                var existingProduct = await _productService.GetByIdAsync(uuid);
+                var existingProduct = await _productService.GetByIdAsync(deleteProductDto.Id);
                 if (existingProduct == null)
-                    return NotFound($"Продукт с ID {uuid} не найден.");
+                    return NotFound($"Продукт с ID {deleteProductDto} не найден.");
 
-                await _productService.DeleteAsync(uuid);
+                await _productService.DeleteAsync(deleteProductDto.Id);
                 return NoContent();
             }
             catch (Exception ex)

@@ -6,7 +6,9 @@ using Ozon.Application.Abstractions;
 using Ozon.Application.Services;
 using Ozon.Application.Settings;
 using Ozon.Core.Abstractions;
+using Ozon.DataAccess.Abstractions;
 using Ozon.DataAccess.Context;
+using Ozon.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAuthService, JwtTokenService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICalculatorService, CalculatorService>();
