@@ -9,6 +9,7 @@ namespace Ozon.DataAccess.Context
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -45,6 +46,12 @@ namespace Ozon.DataAccess.Context
                     .IsRequired();
                 entity.HasIndex(e => e.Uuid).IsUnique(); // Уникальный индекс
             });
+            
+            //
+            modelBuilder.Entity<Warehouse>()
+                .HasMany(w => w.Products)
+                .WithOne(p => p.Warehouse)
+                .HasForeignKey(p => p.WarehouseId);
 
             base.OnModelCreating(modelBuilder);
         }

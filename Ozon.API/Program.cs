@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Ozon.API;
-using Ozon.API.Services;
+using Ozon.API.BackgroundServices;
+using Ozon.API.Mappings;
 using Ozon.Application.Abstractions;
 using Ozon.Application.Services;
 using Ozon.Application.Settings;
@@ -52,8 +53,12 @@ builder.Services.AddScoped<IAuthService, JwtTokenService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<ICalculatorService, CalculatorService>();
+// builder.Services.AddScoped<ICalculatorService, CalculatorService>();
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddHostedService<StockCheckingBackgroundService>();
 builder.Services.AddScoped<JwtSettings>();
+builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddLogging();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ozon.Application.Abstractions;
@@ -12,10 +13,12 @@ namespace Ozon.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IMapper _mapper;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, IMapper mapper)
         {
             _productService = productService;
+            _mapper = mapper;
         }
 
         [HttpGet("GetAllProducts")]
@@ -26,14 +29,15 @@ namespace Ozon.API.Controllers
             try
             {
                 var products = await _productService.GetAllAsync();
-                var productsDto = products.Select(p => new ProductDto
+                /*var productsDto = products.Select(p => new ProductDto
                 {
                     Id = p.Id,
                     Name = p.Name,
                     Price = p.Price,
                     Description = p.Description,
                     StockQuantity = p.StockQuantity
-                }).ToList();
+                }).ToList();*/
+                var productsDto = _mapper.Map<IEnumerable<ProductDto>>(products);
                 return Ok(productsDto);
             }
             catch (Exception ex)
@@ -53,14 +57,15 @@ namespace Ozon.API.Controllers
                 if (product == null)
                     return NotFound($"Продукт с ID {uuid} не найден.");
 
-                var productDto = new ProductDto
+                var productDto = _mapper.Map<ProductDto>(product);
+                /*var productDto = new ProductDto
                 {
                     Id = product.Id,
                     Name = product.Name,
                     Price = product.Price,
                     StockQuantity = product.StockQuantity
-                };
-                
+                };*/
+
                 return Ok(productDto);
             }
             catch (Exception ex)
@@ -80,14 +85,15 @@ namespace Ozon.API.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var product = new Product
+                var product = _mapper.Map<Product>(addProductDto);
+                /*var product = new Product
                 {
                     Id = Guid.NewGuid(), // Генерируем ID на сервере
                     Name = addProductDto.Name,
                     Description = addProductDto.Description,
                     Price = addProductDto.Price,
                     StockQuantity = addProductDto.StockQuantity
-                };
+                };*/
 
                 await _productService.AddAsync(product);
 
@@ -121,11 +127,11 @@ namespace Ozon.API.Controllers
                 var existingProduct = await _productService.GetByIdAsync(uuid);
                 if (existingProduct == null)
                     return NotFound($"Продукт с ID {uuid} не найден.");
-                
-                existingProduct.Name = updateProductDto.Name;
-                existingProduct.Description = updateProductDto.Description;
-                existingProduct.Price = updateProductDto.Price;
-                existingProduct.StockQuantity = updateProductDto.StockQuantity;
+                _mapper.Map(updateProductDto, existingProduct);
+                // existingProduct.Name = updateProductDto.Name;
+                // existingProduct.Description = updateProductDto.Description;
+                // existingProduct.Price = updateProductDto.Price;
+                // existingProduct.StockQuantity = updateProductDto.StockQuantity;
 
                 await _productService.UpdateAsync(existingProduct);
                 return NoContent();

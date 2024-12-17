@@ -9,13 +9,16 @@ public class Product
     {
         Uuid = Guid.NewGuid(); // Автоматическая генерация ID
     }*/
-    
+
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
-    
+
     public string Name { get; set; }
     public string Description { get; set; }
     public decimal Price { get; set; }
     public int StockQuantity { get; set; }
+
+    public Guid WarehouseId { get; set; }
+    public Warehouse Warehouse { get; set; }
 }
